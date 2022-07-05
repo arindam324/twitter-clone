@@ -10,7 +10,16 @@ type User = {
 const UserContext = createContext<User | null>(null);
 
 const UserProvider = ({ children }: { children: ReactNode }) => {
-  return <UserContext.Provider value={null}>{children}</UserContext.Provider>;
+  const initialUser = {
+    id: "1",
+    name: "ganj",
+    avatar: "https://i.pravatar.cc/150?img=14",
+    username: "faglanf",
+  };
+
+  return (
+    <UserContext.Provider value={initialUser}>{children}</UserContext.Provider>
+  );
 };
 
 export default UserProvider;
