@@ -32,9 +32,7 @@ const Tweet = ({ Mytweet }: { Mytweet: TweetProps }) => {
   const user = useUserContext()
 
   const [isDisable, setDisable] = useState<boolean>(true)
-
-  const { Isliked, setLiked } = useLikes(user?.id, Mytweet)
-
+  const like = useLikes(user?.id, Mytweet)
   const list = fetchComments(Mytweet.id)
 
   const OnInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -71,11 +69,16 @@ const Tweet = ({ Mytweet }: { Mytweet: TweetProps }) => {
       <div className='border-y flex justify-between items-center py-4 mt-2 space-x-5 w-full border-gray-700'>
         <FaRegComment size={20} />
         <AiOutlineRetweet size={20} />
-        <div onClick={() => setLiked(!Isliked)}>
-          {!Isliked ? <AiOutlineHeart size={20} /> : <AiFillHeart color='red' size={20} />}
-        </div>
-        <FiShare size={20} />
+        {like && (
+          <>
+            <div onClick={() => like.setLiked(!like.Isliked)}>
+              {!like.Isliked ? <AiOutlineHeart size={20} /> : <AiFillHeart color='red' size={20} />}
+            </div>
+            <FiShare size={20} />
+          </>
+        )}
       </div>
+
       <div className='flex justify-between items-center py-2 mt-2 space-x-5 w-full border-gray-700'>
         {user && <Avatar src={user?.avatar} size={50} />}
         <input
@@ -98,7 +101,13 @@ const Tweet = ({ Mytweet }: { Mytweet: TweetProps }) => {
   )
 }
 
-export async function getServerSideProps({ params }) {
+type Params = {
+  params: {
+    tweetId: string
+  }
+}
+
+export async function getServerSideProps({ params }: Params) {
   const { tweetId } = params
 
   const Mytweet = await Db.findTweet(tweetId)
