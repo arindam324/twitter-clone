@@ -1,23 +1,23 @@
+import { useSession } from 'next-auth/react'
 import { createContext, ReactNode, useContext } from 'react'
 
 type User = {
-  id: string
+  email: string
   name: string
-  username: string
-  avatar: string
+  image: string
 }
 
-const UserContext = createContext<User | null>(null)
+type Session = {
+  user: User | undefined
+  expires: string
+}
+
+const UserContext = createContext<Session | null>(null)
 
 const UserProvider = ({ children }: { children: ReactNode }) => {
-  const initialUser = {
-    id: '1',
-    name: 'ganj',
-    avatar: 'https://i.pravatar.cc/150?img=14',
-    username: 'faglanf',
-  }
-
-  return <UserContext.Provider value={initialUser}>{children}</UserContext.Provider>
+  const { data } = useSession()
+  //FIXME: fix this type error
+  return <UserContext.Provider value={data}>{children}</UserContext.Provider>
 }
 
 export default UserProvider

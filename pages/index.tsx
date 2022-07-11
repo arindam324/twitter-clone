@@ -1,8 +1,9 @@
+import { useEffect } from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 import { useUserContext } from '../Providers/UserProvider'
 import Button from '../components/Button'
 
@@ -31,7 +32,7 @@ const Home: NextPage = () => {
             </h1>
             <p className='font-semibold text-xl mt-8'>Join Twitter Today.</p>
             <div className='w-[80%] mt-4 space-y-4'>
-              <Button color='#000' bg='#fff'>
+              <Button onClick={() => signIn('google')} color='#000' bg='#fff'>
                 <Image src='/google.svg' width={20} height={20} />
                 <p>Sign up with Google</p>
               </Button>

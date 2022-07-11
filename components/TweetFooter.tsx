@@ -8,8 +8,8 @@ const TweetFooter: React.FC<{
   id: string
   retweet: number
   favorites: [string]
-  isLiked: boolean
-  setLiked: Dispatch<SetStateAction<boolean>>
+  isLiked: boolean | undefined
+  setLiked: Dispatch<SetStateAction<boolean>> | undefined
 }> = ({ id, retweet, favorites, isLiked, setLiked }) => {
   const list = fetchComments(id)
   return (
@@ -23,10 +23,12 @@ const TweetFooter: React.FC<{
 
         <p>{retweet}</p>
       </div>
-      <div onClick={() => setLiked(!isLiked)} className='flex items-center space-x-2'>
-        {isLiked ? <AiFillHeart size={'18'} color='red' /> : <AiOutlineHeart size={18} />}
-        <p>{favorites.length}</p>
-      </div>
+      {setLiked && (
+        <div onClick={() => setLiked(!isLiked)} className='flex items-center space-x-2'>
+          {isLiked ? <AiFillHeart size={'18'} color='red' /> : <AiOutlineHeart size={18} />}
+          <p>{favorites.length}</p>
+        </div>
+      )}
       <div>
         <FiShare size={18} />
       </div>

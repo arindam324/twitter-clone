@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
 import { TweetProps } from '../Data/Tweet'
 
-const useLikes = (userId: string | undefined, tweet: TweetProps) => {
+const useLikes = (email: string | undefined, tweet: TweetProps) => {
   const [Isliked, setLiked] = useState<boolean>(false)
 
-  if (userId === undefined) return
+  if (email === undefined) return {}
 
   useEffect(() => {
-    if (tweet.favorites.includes(userId)) {
+    if (tweet.favorites.includes(email)) {
       setLiked(true)
     } else {
       setLiked(false)
     }
-  }, [tweet])
+  }, [tweet, email])
 
   return { Isliked, setLiked }
 }

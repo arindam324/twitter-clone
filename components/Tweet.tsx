@@ -9,10 +9,10 @@ import TweetFooter from './TweetFooter'
 
 const Tweet: React.FC<TweetProps> = (props) => {
   const router = useRouter()
-  const user = useUserContext()
+  const userContext = useUserContext()
 
   const { id, img, name, username, image, text, retweet, favorites } = props
-  const { Isliked, setLiked } = useLikes(user?.id, props)
+  const { Isliked, setLiked } = useLikes(userContext?.user?.email, props)
 
   return (
     <div className='flex  flex-col cursor-pointer px-4 my-2 py-2'>
