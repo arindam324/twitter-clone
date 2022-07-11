@@ -7,20 +7,23 @@
     "format": "prettier --write '**/*.{js,jsx,ts,tsx}'"
   },
   "dependencies": {
+    "@apollo/client": "^3.6.9",
     "@nhost/nextjs": "^1.6.1",
     "@nhost/react": "^0.11.1",
+    "@nhost/react-apollo": "^4.6.1",
     "daisyui": "^2.17.0",
     "graphql": "^16.5.0",
     "next": "latest",
-    "next-auth": "^4.9.0",
     "react": "18.1.0",
     "react-dom": "18.1.0",
-    "react-icons": "^4.4.0"
+    "react-icons": "^4.4.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/node": "17.0.35",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.5",
+    "@types/uuid": "^8.3.4",
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.14",
     "prettier": "^2.7.1",

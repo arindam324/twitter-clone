@@ -3,20 +3,20 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { ChangeEvent, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
-import { useUserContext } from '../Providers/UserProvider'
 
 import TweetButton from '../components/TweetButton'
+import { useUserContext } from '../Providers/UserProvider'
 
 const createTweet = () => {
   const [isDisable, setDisable] = useState<boolean>(true)
 
   const router = useRouter()
 
+  const auth = useUserContext()
+
   const OnInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setDisable(e.target.value.length === 0)
   }
-
-  const user = useUserContext()
 
   return (
     <div>
@@ -32,7 +32,9 @@ const createTweet = () => {
         </div>
         <div className='flex space-x-4 mt-4'>
           <div>
-            {user && <Image src={user.avatar} width={50} height={50} className='rounded-full' />}
+            {auth?.avatarUrl && (
+              <Image src={auth?.avatarUrl} width={50} height={50} className='rounded-full' />
+            )}
           </div>
           <input
             onChange={OnInputChange}

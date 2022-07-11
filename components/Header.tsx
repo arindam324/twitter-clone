@@ -8,7 +8,7 @@ const Header = () => {
     <header className='flex p-4 items-center justify-between'>
       <div className='avatar flex items-center space-x-4'>
         <div className='rounded-full'>
-          {userContext && <Image src={userContext.user.image} width={40} height={40} />}
+          {userContext && <Image src={userContext?.avatarUrl} width={40} height={40} />}
         </div>
         <p className='text-xl font-semibold'>Home</p>
       </div>

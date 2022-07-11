@@ -2,20 +2,21 @@ import { useEffect } from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { signIn } from 'next-auth/react'
+import { useNhostClient, useAuthenticationStatus } from '@nhost/nextjs'
 import { useRouter } from 'next/router'
-import { useUserContext } from '../Providers/UserProvider'
 import Button from '../components/Button'
 
 const Home: NextPage = () => {
-  const user = useUserContext()
   const router = useRouter()
 
+  const nhost = useNhostClient()
+  const { isAuthenticated } = useAuthenticationStatus()
+
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated) {
       router.push('/home')
     }
-  }, [user])
+  }, [isAuthenticated])
 
   return (
     <div className='flex min-h-screen flex-col '>
@@ -24,7 +25,7 @@ const Home: NextPage = () => {
         <link rel='icon' href='/twitter.ico' />
       </Head>
       <main className='bg-black p-8 text-white w-full min-h-screen'>
-        {!user && (
+        {!isAuthenticated && (
           <div>
             <Image src='/twitter.svg' width={60} height={60} alt='logo' />
             <h1 className='text-4xl mt-6 font-bold'>
@@ -32,7 +33,15 @@ const Home: NextPage = () => {
             </h1>
             <p className='font-semibold text-xl mt-8'>Join Twitter Today.</p>
             <div className='w-[80%] mt-4 space-y-4'>
-              <Button onClick={() => signIn('google')} color='#000' bg='#fff'>
+              <Button
+                onClick={() =>
+                  nhost.auth.signIn({
+                    provider: 'google',
+                  })
+                }
+                color='#000'
+                bg='#fff'
+              >
                 <Image src='/google.svg' width={20} height={20} />
                 <p>Sign up with Google</p>
               </Button>

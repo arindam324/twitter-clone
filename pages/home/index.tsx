@@ -3,23 +3,24 @@ import { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { useUserContext } from '../../Providers/UserProvider'
 
 import FloatingButton from '../../components/FloatingButton'
 import Header from '../../components/Header'
 import { TweetData } from '../../Data/Tweet'
+import { useAuthenticationStatus } from '@nhost/react'
 
 const Tweet = lazy(() => import('../../components/Tweet'))
 
 const Home: NextPage = () => {
-  const user = useUserContext()
   const router = useRouter()
 
+  const { isAuthenticated } = useAuthenticationStatus()
+
   useEffect(() => {
-    if (!user) {
+    if (!isAuthenticated) {
       router.push('/')
     }
-  }, [user])
+  }, [isAuthenticated])
 
   return (
     <div className='w-full min-h-screen'>

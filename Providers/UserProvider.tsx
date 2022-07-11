@@ -1,23 +1,17 @@
-import { useSession } from 'next-auth/react'
+import { useUserData } from '@nhost/react'
 import { createContext, ReactNode, useContext } from 'react'
 
 type User = {
-  email: string
-  name: string
-  image: string
+  id: string
+  displayName: string
+  avatarUrl: string
 }
 
-type Session = {
-  user: User | undefined
-  expires: string
-}
+const UserContext = createContext<User | null>(null)
 
-const UserContext = createContext<Session | null>(null)
-
-const UserProvider = ({ children }: { children: ReactNode }) => {
-  const { data } = useSession()
-  //FIXME: fix this type error
-  return <UserContext.Provider value={data}>{children}</UserContext.Provider>
+const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const user = useUserData()
+  return <UserContext.Provider value={user}>{children}</UserContext.Provider>
 }
 
 export default UserProvider
