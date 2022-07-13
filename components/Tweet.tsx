@@ -16,16 +16,16 @@ export type TweetProps = {
     displayName: string
     avatarUrl: string
   }
+  Likes: [string]
 }
 
 const Tweet: React.FC<TweetProps> = (props) => {
   const router = useRouter()
   const userContext = useUserContext()
 
-  // const { id, name, username, image, text, retweet, favorites, userId } = props
   // const { Isliked, setLiked } = useLikes(userContext?.id, props)
 
-  const { id, Tweetusers, text, image } = props
+  const { id, Tweetusers, text, image, Likes } = props
 
   return (
     <div className='flex  flex-col cursor-pointer px-4 my-2 py-2'>
@@ -44,16 +44,16 @@ const Tweet: React.FC<TweetProps> = (props) => {
             <BsThreeDots size={20} />
           </div>
           <p className='text-md'>{text}</p>
-          {image && <Image src={image} width={400} height={280} />}
+          {image && <Image src={image} className='rounded-md mt-2' width={400} height={280} />}
         </div>
       </div>
-      {/* <TweetFooter
+      <TweetFooter
         id={id}
         // retweet={retweet}
-        // favorites={favorites}
+        favorites={Likes.length}
         // setLiked={setLiked}
         // isLiked={Isliked}
-      /> */}
+      />
     </div>
   )
 }

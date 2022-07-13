@@ -2,7 +2,7 @@ import { useEffect, lazy, Suspense } from 'react'
 import { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { gql, useQuery } from '@apollo/client'
+import { gql, useQuery, useSubscription } from '@apollo/client'
 
 import FloatingButton from '../../components/FloatingButton'
 import Header from '../../components/Header'
@@ -12,7 +12,7 @@ const Tweet = lazy(() => import('../../components/Tweet'))
 import { TweetProps } from '../../components/Tweet'
 
 const GET_TWEETS = gql`
-  query getTweets {
+  subscription getTweets {
     posts_tweets {
       id
       text
@@ -22,6 +22,9 @@ const GET_TWEETS = gql`
         displayName
         avatarUrl
       }
+      Likes {
+        id
+      }
     }
   }
 `
@@ -30,7 +33,8 @@ const Home: NextPage = () => {
   const router = useRouter()
   const { isAuthenticated } = useAuthenticationStatus()
 
-  const { loading, data } = useQuery(GET_TWEETS)
+  // const { loading, data } = useQuery(GET_TWEETS)
+  const { data, loading } = useSubscription(GET_TWEETS)
 
   useEffect(() => {
     if (!isAuthenticated) {
