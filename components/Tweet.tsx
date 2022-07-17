@@ -1,10 +1,7 @@
 import Image from 'next/image'
-import { gql, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { BsThreeDots } from 'react-icons/bs'
 
-import useLikes from '../hooks/useLikes'
-import { useUserContext } from '../Providers/UserProvider'
 import TweetFooter from './TweetFooter'
 
 export type TweetProps = {
@@ -17,15 +14,13 @@ export type TweetProps = {
     avatarUrl: string
   }
   Likes: [string]
+  isLiked?: boolean
 }
 
 const Tweet: React.FC<TweetProps> = (props) => {
   const router = useRouter()
-  const userContext = useUserContext()
 
-  // const { Isliked, setLiked } = useLikes(userContext?.id, props)
-
-  const { id, Tweetusers, text, image, Likes } = props
+  const { id, Tweetusers, text, image, Likes, isLiked } = props
 
   return (
     <div className='flex  flex-col cursor-pointer px-4 my-2 py-2'>
@@ -47,13 +42,7 @@ const Tweet: React.FC<TweetProps> = (props) => {
           {image && <Image src={image} className='rounded-md mt-2' width={400} height={280} />}
         </div>
       </div>
-      <TweetFooter
-        id={id}
-        // retweet={retweet}
-        favorites={Likes.length}
-        // setLiked={setLiked}
-        // isLiked={Isliked}
-      />
+      <TweetFooter id={id} favorites={Likes.length} isLiked={isLiked} />
     </div>
   )
 }

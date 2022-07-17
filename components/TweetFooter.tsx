@@ -6,6 +6,7 @@ import { AiOutlineRetweet, AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import { FiShare } from 'react-icons/fi'
 import fetchComments from '../utils/fetchComments'
 import { useUserContext } from '../Providers/UserProvider'
+import useLikes from '../hooks/useLikes'
 
 const CREATE_LIKE = gql`
   mutation createLikes($id: uuid!, $userId: uuid!, $tweeId: uuid!) {
@@ -24,16 +25,18 @@ const TweetFooter: React.FC<{
   id: string
   retweet?: number
   favorites?: number
-}> = ({ id, retweet, favorites }) => {
+  isLiked: boolean
+}> = ({ id, retweet, favorites, isLiked }) => {
   const list = fetchComments(id)
-  const [isLiked, setLiked] = useState<boolean>(false)
+
+  const [IsLiked, setLiked] = useState<boolean | undefined>(isLiked)
 
   const user = useUserContext()
 
   const [mutateLike, { loading }] = useMutation(CREATE_LIKE)
 
   const setLike = async () => {
-    setLiked(!isLiked)
+    setLiked(!IsLiked)
     try {
       await mutateLike({
         variables: {
@@ -59,7 +62,7 @@ const TweetFooter: React.FC<{
       </div>
 
       <div onClick={setLike} className='flex cursor-pointer text-white items-center space-x-2'>
-        {isLiked ? <AiFillHeart size={'18'} color='red' /> : <AiOutlineHeart size={18} />}
+        {IsLiked ? <AiFillHeart size={'18'} color='red' /> : <AiOutlineHeart size={18} />}
         <p>{favorites}</p>
       </div>
 
