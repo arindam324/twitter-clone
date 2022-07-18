@@ -40,10 +40,6 @@ const UseLike = (id: string, isLiked: boolean) => {
     }
   }
 
-  useEffect(() => {
-    toggleLike()
-  }, [])
-
   return { toggleLike }
 }
 
