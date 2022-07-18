@@ -1,8 +1,11 @@
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { BsThreeDots } from 'react-icons/bs'
+import { gql, useQuery, useSubscription } from '@apollo/client'
 
 import TweetFooter from './TweetFooter'
+import UseLike from '../hooks/useLikes'
+import { useUserContext } from '../Providers/UserProvider'
 
 export type TweetProps = {
   id: string
@@ -13,14 +16,47 @@ export type TweetProps = {
     displayName: string
     avatarUrl: string
   }
-  Likes: [string]
+
   isLiked?: boolean
 }
 
+const CHECK_LIKE = gql`
+  subscription CheckLike($tweetId: uuid!, $userId: uuid) {
+    posts_likes(where: { tweeId: { _eq: $tweetId }, userId: { _eq: $userId } }) {
+      id
+    }
+  }
+`
+
+const Like_Count = gql`
+  query Like_Count($tweetId: uuid!) {
+    posts_likes(where: { tweeId: { _eq: $tweetId } }) {
+      likedBy {
+        id
+      }
+    }
+  }
+`
+
 const Tweet: React.FC<TweetProps> = (props) => {
   const router = useRouter()
+  const { id, Tweetusers, text, image, isLiked } = props
+  const user = useUserContext()
 
-  const { id, Tweetusers, text, image, Likes, isLiked } = props
+  // checking if the logged in user liked the tweet
+  const { data, loading } = useSubscription(CHECK_LIKE, {
+    variables: { tweetId: id, userId: user?.id },
+  })
+
+  // fetching likes count
+  const { data: likes, loading: loading2 } = useQuery(Like_Count, {
+    variables: {
+      tweetId: id,
+    },
+  })
+
+  if (loading) return null
+  if (loading2) return null
 
   return (
     <div className='flex  flex-col cursor-pointer px-4 my-2 py-2'>
@@ -42,7 +78,11 @@ const Tweet: React.FC<TweetProps> = (props) => {
           {image && <Image src={image} className='rounded-md mt-2' width={400} height={280} />}
         </div>
       </div>
-      <TweetFooter id={id} favorites={Likes.length} isLiked={isLiked} />
+      <TweetFooter
+        id={id}
+        favorites={likes.posts_likes.length}
+        isLiked={data.posts_likes.length > 0}
+      />
     </div>
   )
 }

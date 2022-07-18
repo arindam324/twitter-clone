@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { ChangeEvent, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
+import toast, { Toaster } from 'react-hot-toast'
 
 import { gql, useMutation } from '@apollo/client'
 import { v4 as uuid } from 'uuid'
@@ -11,14 +12,8 @@ import TweetButton from '../components/TweetButton'
 import { useUserContext } from '../Providers/UserProvider'
 
 const CREATE_TWEETS = gql`
-  mutation insertTweet {
-    insert_posts_tweets(
-      objects: {
-        id: "a88f302c-5d84-4ca8-a1a8-7762c2a07ea9"
-        userId: "6ce49770-690e-41c6-bb98-f649dc1ae2dd"
-        text: "hello from nhost "
-      }
-    ) {
+  mutation insertTweet($id: uuid!, $userId: uuid!, $text: String!) {
+    insert_posts_tweets(objects: { id: $id, userId: $userId, text: $text }) {
       returning {
         id
         userId
@@ -41,15 +36,19 @@ const createTweet = () => {
   }
 
   const [createTweet] = useMutation(CREATE_TWEETS)
+
   const OnSubmit = async () => {
     try {
       await createTweet({
         variables: {
           id: uuid(),
-          text: text,
           userId: auth?.id,
+          text: text,
         },
       })
+      setText('')
+      setDisable(true)
+      toast.success('Tweet created!')
     } catch (err) {
       console.error(err)
     }
@@ -62,6 +61,7 @@ const createTweet = () => {
         <link rel='icon' href='/twitter.ico' />
       </Head>
       <main className='bg-black w-full min-h-screen p-4'>
+        <Toaster position='top-center' />
         <div className='flex items-center justify-between'>
           <BsArrowLeft size={20} className='cursor-pointer' onClick={() => router.back()} />
 
@@ -75,6 +75,7 @@ const createTweet = () => {
           </div>
           <input
             onChange={OnInputChange}
+            value={text}
             className='bg-black text-xl  w-full text-white focus:outline-none '
             placeholder="what's happening"
           />

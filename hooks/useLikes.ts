@@ -1,35 +1,50 @@
+import { gql, useMutation } from '@apollo/client'
+import { useEffect } from 'react'
 import { useUserContext } from '../Providers/UserProvider'
-import { gql, useQuery } from '@apollo/client'
 
-const CHECK_IF_LIKED = gql`
-  query MyLikes {
-    posts_likes(
-      where: {
-        tweeId: { _eq: "290a7963-8459-45f6-a716-9d5f22f7ff9f" }
-        userId: { _eq: "6ce49770-690e-41c6-bb98-f649dc1ae2dd" }
+const CREATE_LIKE = gql`
+  mutation CreateLike($id: uuid!, $tweetId: uuid!, $userId: uuid!) {
+    insert_posts_likes(objects: { id: $id, tweeId: $tweeId, userId: $userId }) {
+      returning {
+        id
       }
-    ) {
-      id
-      tweeId
-      userId
     }
   }
 `
 
-const useLikes = (id: string | undefined) => {
+const DELETE_LIKE = gql`
+  mutation DELETE_LIKE($id: uuid!, $userId: uuid!) {
+    delete_posts_likes(where: { tweetId: { _eq: $id }, userId: { _eq: $userId } }) {
+      returning {
+        id
+      }
+    }
+  }
+`
+
+const UseLike = (id: string, isLiked: boolean) => {
   const user = useUserContext()
+  const [deleteLike] = useMutation(DELETE_LIKE)
+  const [createLike] = useMutation(CREATE_LIKE)
 
-  const { data, loading } = useQuery(CHECK_IF_LIKED, {
-    variables: {
-      tweetId: id,
-      userID: user?.id,
-    },
-  })
+  const toggleLike = async () => {
+    if (isLiked) {
+      await deleteLike({ variables: { id } })
+    } else {
+      await createLike({
+        variables: {
+          id: id,
+          userId: user?.id,
+        },
+      })
+    }
+  }
 
-  if (id === undefined) return {}
-  if (loading) return {}
+  useEffect(() => {
+    toggleLike()
+  }, [])
 
-  return { data }
+  return { toggleLike }
 }
 
-export default useLikes
+export default UseLike

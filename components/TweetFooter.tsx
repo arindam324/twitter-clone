@@ -7,19 +7,7 @@ import { FiShare } from 'react-icons/fi'
 import fetchComments from '../utils/fetchComments'
 import { useUserContext } from '../Providers/UserProvider'
 import useLikes from '../hooks/useLikes'
-
-const CREATE_LIKE = gql`
-  mutation createLikes($id: uuid!, $userId: uuid!, $tweeId: uuid!) {
-    insert_posts_likes(objects: { id: $id, tweeId: $tweeId, userId: $userId }) {
-      returning {
-        likedBy {
-          displayName
-          id
-        }
-      }
-    }
-  }
-`
+import UseLike from '../hooks/useLikes'
 
 const TweetFooter: React.FC<{
   id: string
@@ -31,24 +19,7 @@ const TweetFooter: React.FC<{
 
   const [IsLiked, setLiked] = useState<boolean | undefined>(isLiked)
 
-  const user = useUserContext()
-
-  const [mutateLike, { loading }] = useMutation(CREATE_LIKE)
-
-  const setLike = async () => {
-    setLiked(!IsLiked)
-    try {
-      await mutateLike({
-        variables: {
-          id: uuid(),
-          tweeId: id,
-          userId: user?.id,
-        },
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  const { toggleLike } = UseLike(id, isLiked)
 
   return (
     <div className='flex mt-2  w-[80%] ml-auto items-center justify-between'>
@@ -61,8 +32,8 @@ const TweetFooter: React.FC<{
         <p>{retweet}</p>
       </div>
 
-      <div onClick={setLike} className='flex cursor-pointer text-white items-center space-x-2'>
-        {IsLiked ? <AiFillHeart size={'18'} color='red' /> : <AiOutlineHeart size={18} />}
+      <div onClick={toggleLike} className='flex cursor-pointer text-white items-center space-x-2'>
+        {isLiked ? <AiFillHeart size={'18'} color='red' /> : <AiOutlineHeart size={18} />}
         <p>{favorites}</p>
       </div>
 
